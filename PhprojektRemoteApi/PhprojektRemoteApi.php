@@ -12,48 +12,77 @@
 namespace PhprojektRemoteApi;
 
 use Goutte\Client;
+use \Symfony\Component\DomCrawler\Crawler as Crawler;
 
+/**
+ * Remote API to Phprojekt
+ */
 class PhprojektRemoteApi
 {
 
-    protected $baseUrl;
+    /**
+     * @var string
+     */
+    protected $phprojektUrl;
 
+    /**
+     * @var string
+     */
     protected $username;
 
+    /**
+     * @var string
+     */
     protected $password;
 
+    /**
+     * @var bool
+     */
     protected $loggedIn = false;
 
     /**
      * @var \Goutte\Client
      */
-    protected $crawler;
+    protected $httpClient;
 
+    /**
+     * @param string $phprojektUrl
+     * @param string $username
+     * @param string $password
+     */
     public function __construct($phprojektUrl, $username, $password)
     {
-        $this->baseUrl  = $phprojektUrl;
-        $this->username = $username;
-        $this->password = $password;
+        $this->phprojektUrl  = $phprojektUrl;
+        $this->username      = $username;
+        $this->password      = $password;
 
-        $this->crawler = new Client();
-        $this->crawler->getClient()->setDefaultOption('verify', false);
+        $this->httpClient = new Client();
+        $this->httpClient->getClient()->setDefaultOption('verify', false);
     }
 
+    /**
+     * Login to PHProjekt
+     *
+     * @return bool True on successful login, false otherwise
+     */
     public function login()
     {
         if (empty($this->username) || empty($this->password)) {
             return false;
         }
 
-        $crawler = $this->crawler->request('GET', $this->baseUrl);
+        $crawler = $this->httpClient->request('GET', $this->phprojektUrl);
         $xpath = '//*[@id="global-main"]/div[2]/form/fieldset/input[3]';
         $node = $crawler->filterXPath($xpath);
         $form = $node->form();
 
-        $login = $this->crawler->submit($form, [
+        $login = $this->httpClient->submit(
+            $form,
+            [
                 'loginstring' => $this->username,
-                'user_pw' => $this->password
-            ]);
+                'user_pw'     => $this->password
+            ]
+        );
 
         try {
             $message = trim($login->filter('div > fieldset')->text());
@@ -63,9 +92,22 @@ class PhprojektRemoteApi
         }
     }
 
+    /**
+     * Returns bookings for a specific user and project between $start and $end
+     *
+     * @param string $start
+     * @param string $end
+     * @param int    $project
+     * @param int    $user
+     *
+     * @return float
+     */
     public function stat($start, $end, $project, $user)
     {
-        $crawler = $this->crawler->request('GET', $this->baseUrl . '/projects/projects.php?mode=stat');
+        $crawler = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/projects/projects.php?mode=stat'
+        );
 
         $xpath = '//*[@id="global-content"]/form[3]/fieldset/input[7]';
         $node = $crawler->filterXPath($xpath);
@@ -73,17 +115,19 @@ class PhprojektRemoteApi
 
         $form->setValues(
             array(
-                'periodtype' => 0,
-                'anfang' => $start,
-                'ende' => $end,
+                'periodtype'  => 0,
+                'anfang'      => $start,
+                'ende'        => $end,
                 'projectlist' => array($project),
-                'userlist' => array($user),
+                'userlist'    => array($user),
             )
         );
 
-        $crawler = $this->crawler->submit($form);
+        $crawler = $this->httpClient->submit($form);
 
-        $node = $crawler->filterXPath('//*[@id="global-content"]/table/tfoot/tr[2]/td[2]/b');
+        $node = $crawler->filterXPath(
+            '//*[@id="global-content"]/table/tfoot/tr[2]/td[2]/b'
+        );
         return $this->text2hours($node->text());
     }
 
@@ -103,28 +147,49 @@ class PhprojektRemoteApi
     }
 
     /**
+     * Stop the working hours timer
+     *
      * @return void
      */
     public function stopWorkingtime()
     {
-        $timecard = $this->crawler->request('GET', $this->baseUrl . '/timecard/timecard.php');
+        $timecard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php'
+        );
         $link = $timecard->selectLink('Arbeitszeit Ende')->link();
-        $this->crawler->click($link);
+        $this->httpClient->click($link);
     }
 
     /**
+     * Start the working hours timer
+     *
      * @return void
      */
     public function startWorkingtime()
     {
-        $timecard = $this->crawler->request('GET', $this->baseUrl . '/timecard/timecard.php');
+        $timecard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php'
+        );
         $link = $timecard->selectLink('Arbeitszeit Start')->link();
-        $this->crawler->click($link);
+        $this->httpClient->click($link);
     }
 
+    /**
+     * Add a time booking for today
+     *
+     * @param string $start
+     * @param string $end
+     *
+     * @return void
+     */
     public function bookTime($start, $end)
     {
-        $timecard = $this->crawler->request('GET', $this->baseUrl . '/timecard/timecard.php');
+        $timecard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php'
+        );
 
         $xpath = '//*[@name="nachtragen1"]';
         $node = $timecard->filterXPath($xpath);
@@ -135,15 +200,23 @@ class PhprojektRemoteApi
                 'timestop' => $end
             ]);
 
-        $this->crawler->submit($form);
+        $this->httpClient->submit($form);
     }
 
+    /**
+     * Returns the working times for today
+     *
+     * @return array
+     */
     public function listWorkingtimeToday()
     {
-        $timecard = $this->crawler->request('GET', $this->baseUrl . '/timecard/timecard.php');
+        $timeCard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php'
+        );
 
         $xpath = '//table[@summary=""]/tbody';
-        $node = $timecard->filterXPath($xpath);
+        $node = $timeCard->filterXPath($xpath);
 
         $document = new \DOMDocument();
         $document->loadHTML($node->html());
@@ -163,53 +236,77 @@ class PhprojektRemoteApi
         }
 
         $xpath = '//table[@summary=""]/tfoot/tr/td[3]';
-        $node = $timecard->filterXPath($xpath);
+        $node = $timeCard->filterXPath($xpath);
         $overall = $node->html();
 
-        return array(
+        return [
             $out,
             $overall
+        ];
+    }
+
+    /**
+     * Add a project time booking
+     *
+     * @param int    $project Project index
+     * @param int    $hours
+     * @param int    $minutes
+     * @param string $description
+     */
+    public function bookProjectTime($project, $hours, $minutes, $description)
+    {
+        $this->bookProject(
+            $project,
+            $hours,
+            $minutes,
+            $description,
+            $this->getProjectCard()
         );
     }
 
-    public function bookProjectTime($project, $hours, $minutes, $description)
-    {
-        $projectcard = $this->getProjectCard();
-
-        $this->bookProject($project, $hours, $minutes, $description, $projectcard);
-    }
-
     /**
-     * @param $project
-     * @param $hours
-     * @param $minutes
-     * @param $description
-     * @param $projectcard
+     * Add a project time booking
+     *
+     * @param int     $project Project index
+     * @param int     $hours
+     * @param int     $minutes
+     * @param string  $description
+     * @param Crawler $projectCard
      */
-    protected function bookProject($project, $hours, $minutes, $description, $projectcard)
+    protected function bookProject($project, $hours, $minutes, $description, $projectCard)
     {
         $xpath = '//form[@name="book"]';
-        $node = $projectcard->filterXPath($xpath);
+        $node = $projectCard->filterXPath($xpath);
 
         $formProject = $project - 1;
-        $this->crawler->submit($node->form(), [
+        $this->httpClient->submit(
+            $node->form(),
+            [
                 "note[$formProject]" => $description,
-                "h[$formProject]" => $hours,
-                "m[$formProject]" => $minutes
-            ]);
+                "h[$formProject]"    => $hours,
+                "m[$formProject]"    => $minutes
+            ]
+        );
     }
 
     /**
-     * @return \Symfony\Component\DomCrawler\Crawler
+     * @return Crawler
      */
     protected function getProjectCard()
     {
-        $timecard = $this->crawler->request('GET', $this->baseUrl . '/timecard/timecard.php');
-        $link = $timecard->selectLink('Favoriten')->link();
-        $projectcard = $this->crawler->click($link);
-        return $projectcard;
+        $timeCard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php'
+        );
+        $link = $timeCard->selectLink('Favoriten')->link();
+        return $this->httpClient->click($link);
     }
 
+    /**
+     * Returns project bookings for today
+     *
+     * @return array
+     */
     public function listProjects()
     {
         $projectCard = $this->getProjectCard();
@@ -232,7 +329,10 @@ class PhprojektRemoteApi
             }
 
             $projectIndex++;
-            $projects[$projectIndex] = ['name' => $projectTextContent, 'bookings' => []];
+            $projects[$projectIndex] = [
+                'name'     => $projectTextContent,
+                'bookings' => []
+            ];
         }
 
         $xpath = '//table[@summary=""]/tfoot/tr/td[2]';
@@ -243,10 +343,11 @@ class PhprojektRemoteApi
         $node = $projectCard->filterXPath($xpath);
         $overallBookings = $node->html();
 
-        return array(
-            $projects, $stillToBook, $overallBookings
-        );
-
+        return [
+            $projects,
+            $stillToBook,
+            $overallBookings
+        ];
     }
 
 }
