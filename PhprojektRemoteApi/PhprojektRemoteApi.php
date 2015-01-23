@@ -58,7 +58,7 @@ class PhprojektRemoteApi
         try {
             $message = trim($login->filter('div > fieldset')->text());
             return $message != 'Sorry you are not allowed to enter.';
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             return true;
         }
     }
