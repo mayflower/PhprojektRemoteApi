@@ -145,7 +145,7 @@ class PhprojektRemoteApi
         $xpath = '//table[@summary=""]/tbody';
         $node = $timecard->filterXPath($xpath);
 
-        $document = new DOMDocument();
+        $document = new \DOMDocument();
         $document->loadHTML($node->html());
 
         $times = $document->getElementsByTagName('tr');
@@ -216,7 +216,7 @@ class PhprojektRemoteApi
 
         $xpath = '//form[@name="book"]/fieldset/table/tbody';
         $node = $projectCard->filterXPath($xpath);
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->loadHTML($node->html());
         $projectsInDom = $dom->getElementsByTagName('tr');
 
