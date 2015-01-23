@@ -1,0 +1,12 @@
+{
+    "name": "mayflower/PhprojektRemoteApi",
+    "description": "Remote HTTP API to PHProjekt",
+    "license": "THE BEER-WARE LICENSE",
+    "homepage": "https://github.com/Mayflower/PhprojektRemoteApi",
+    "require": {
+        "fabpot/goutte": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {"PhprojektRemoteApi\\": "PhprojektRemoteApi/"}
+    }
+}
