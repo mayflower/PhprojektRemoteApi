@@ -44,6 +44,31 @@ class Projects extends AbstractApi
     }
 
     /**
+     * Returns own bookings for current user and project between $start and $end
+     *
+     * @param int    $project
+     * @param string $start
+     * @param string $end
+     *
+     * @return float
+     */
+    public function getMyProjectBookings($project, $start, $end)
+    {
+        $page = $this->getProjectsPage(array(
+            'mode'  => 'stat',
+            'mode2' => 'mystat'
+        ));
+        $form = $this->getFilterConfigurationForm($page);
+        $form->setValues(array(
+            'periodtype'  => 0,
+            'anfang'      => $start,
+            'ende'        => $end,
+            'projectlist' => array($project),
+        ));
+        return $this->getStatisticsSum($form);
+    }
+
+    /**
      * Returns the crawler for the projects page.
      *
      * @param array $urlParams
