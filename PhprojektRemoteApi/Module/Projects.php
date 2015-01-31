@@ -12,6 +12,7 @@
 namespace PhprojektRemoteApi\Module;
 
 use PhprojektRemoteApi\Tools\Convert;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Projects extends AbstractApi
 {
@@ -28,25 +29,58 @@ class Projects extends AbstractApi
      */
     public function getProjectBookings($project, $start, $end, $user)
     {
+        $page = $this->getProjectsPage(array(
+            'mode' => 'stat'
+        ));
+        $form = $this->getFilterConfigurationForm($page);
+        $form->setValues(array(
+            'periodtype'  => 0,
+            'anfang'      => $start,
+            'ende'        => $end,
+            'projectlist' => array($project),
+            'userlist'    => array($user),
+        ));
+        return $this->getStatisticsSum($form);
+    }
+
+    /**
+     * Returns the crawler for the projects page.
+     *
+     * @param array $urlParams
+     *
+     * @return \Symfony\Component\DomCrawler\Crawler
+     */
+    public function getProjectsPage(array $urlParams)
+    {
         $crawler = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/projects/projects.php?mode=stat'
+            $this->phprojektUrl . '/projects/projects.php?' . http_build_query($urlParams)
         );
+        return $crawler;
+    }
 
-        $xpath = '//*[@id="global-content"]/form[3]/fieldset/input[7]';
+    /**
+     * Returns the filter configuration form node.
+     *
+     * @param \Symfony\Component\DomCrawler\Crawler $crawler
+     *
+     * @return \Symfony\Component\DomCrawler\Form
+     */
+    protected function getFilterConfigurationForm(Crawler $crawler) {
+        $xpath = '//*[@id="global-content"]/form[3]';
         $node = $crawler->filterXPath($xpath);
-        $form = $node->form();
+        return $node->form();
+    }
 
-        $form->setValues(
-            array(
-                'periodtype'  => 0,
-                'anfang'      => $start,
-                'ende'        => $end,
-                'projectlist' => array($project),
-                'userlist'    => array($user),
-            )
-        );
-
+    /**
+     * Returns the statistics sum as a result for the given form.
+     *
+     * @param \Symfony\Component\DomCrawler\Form $form
+     *
+     * @return float
+     */
+    protected function getStatisticsSum(\Symfony\Component\DomCrawler\Form $form)
+    {
         $crawler = $this->httpClient->submit($form);
 
         $node = $crawler->filterXPath(
