@@ -13,6 +13,7 @@ namespace PhprojektRemoteApi\Module;
 
 use PhprojektRemoteApi\Tools\Convert;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 class Projects extends AbstractApi
 {
@@ -73,7 +74,7 @@ class Projects extends AbstractApi
      *
      * @param array $urlParams
      *
-     * @return \Symfony\Component\DomCrawler\Crawler
+     * @return Crawler
      */
     public function getProjectsPage(array $urlParams)
     {
@@ -87,9 +88,9 @@ class Projects extends AbstractApi
     /**
      * Returns the filter configuration form node.
      *
-     * @param \Symfony\Component\DomCrawler\Crawler $crawler
+     * @param Crawler $crawler
      *
-     * @return \Symfony\Component\DomCrawler\Form
+     * @return Form
      */
     protected function getFilterConfigurationForm(Crawler $crawler) {
         $xpath = '//*[@id="global-content"]/form[3]';
@@ -100,11 +101,11 @@ class Projects extends AbstractApi
     /**
      * Returns the statistics sum as a result for the given form.
      *
-     * @param \Symfony\Component\DomCrawler\Form $form
+     * @param Form $form
      *
      * @return float
      */
-    protected function getStatisticsSum(\Symfony\Component\DomCrawler\Form $form)
+    protected function getStatisticsSum(Form $form)
     {
         $crawler = $this->httpClient->submit($form);
 
