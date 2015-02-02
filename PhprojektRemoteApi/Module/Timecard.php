@@ -185,7 +185,7 @@ class Timecard extends AbstractApi
             foreach($specifiedTimeRow as $timeRow) {
                 $row[] = $timeRow->textContent;
             }
-            if ($row[0] != "") {
+            if ($row[0] != "" && $row[1] != "") {
                 $worklog->addLog(
                     new WorkLog(
                         DateTime::createFromFormat("Hi", $row[0]),
