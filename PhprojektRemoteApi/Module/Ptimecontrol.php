@@ -11,75 +11,110 @@
 
 namespace PhprojektRemoteApi\Module;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 class Ptimecontrol extends AbstractApi
 {
 
+    protected $projectHoursXPath = '//*/table/tbody/tr/td[2]';
+    protected $workingHoursXPath = '//*/table/tbody/tr/td[3]';
+    protected $overtimeXPath = '//*/table/tbody/tr/td[4]';
+
     public function getOvertimeOverall()
     {
+        $page = $this->getPtimecontrolPage(['action' => 'full']);
+
+        return $page->filterXPath($this->overtimeXPath)->html();
     }
 
     public function getOvertimeYear($year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'year',
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->overtimeXPath)->html();
     }
 
     public function getOvertimeMonth($month, $year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'month',
+            'month' => $month,
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->overtimeXPath)->html();
     }
 
     public function getWorkedHoursOverall()
     {
+        $page = $this->getPtimecontrolPage(['action' => 'full']);
+
+        return $page->filterXPath($this->workingHoursXPath)->html();
     }
 
     public function getWorkedHoursYear($year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'year',
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->workingHoursXPath)->html();
     }
 
     public function getWorkedHoursMonth($month, $year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'month',
+            'month' => $month,
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->workingHoursXPath)->html();
     }
 
     public function getProjectHoursOverall()
     {
+        $page = $this->getPtimecontrolPage(['action' => 'full']);
+
+        return $page->filterXPath($this->projectHoursXPath)->html();
     }
 
     public function getProjectHoursYear($year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'year',
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->projectHoursXPath)->html();
     }
 
     public function getProjectHoursMonth($month, $year)
     {
+        $page = $this->getPtimecontrolPage([
+            'action' => 'month',
+            'month' => $month,
+            'year' => $year
+        ]);
+
+        return $page->filterXPath($this->projectHoursXPath)->html();
     }
 
-    public function getSickDays()
+    /**
+     * @param $params
+     *
+     * @return Crawler
+     */
+    private function getPtimecontrolPage($params)
     {
-    }
-
-    public function getVacationDays()
-    {
-    }
-
-    public function getLaidOffDays()
-    {
-    }
-
-    public function getSchoolDays()
-    {
-    }
-
-    public function getOvertimeDays()
-    {
-    }
-
-    public function getSpecialVacationDays()
-    {
-    }
-
-    public function getParentalLeaveDays()
-    {
-    }
-
-    public function getRemainingVacationDays()
-    {
+        return $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/ptimecontrol/ptc.php?' . http_build_query($params)
+        );
     }
 
 }
