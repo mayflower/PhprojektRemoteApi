@@ -16,9 +16,9 @@ use Symfony\Component\DomCrawler\Crawler;
 class Ptimecontrol extends AbstractApi
 {
 
-    protected $projectHoursXPath = '//*/table/tbody/tr/td[2]';
-    protected $workingHoursXPath = '//*/table/tbody/tr/td[3]';
-    protected $overtimeXPath = '//*/table/tbody/tr/td[4]';
+    protected $projectHoursXPath = '//*/table/tr/td[2]';
+    protected $workingHoursXPath = '//*/table/tr/td[3]';
+    protected $overtimeXPath = '//*/table/tr/td[4]';
 
     public function getOvertimeOverall()
     {
