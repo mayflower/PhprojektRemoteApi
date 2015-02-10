@@ -11,6 +11,7 @@
 
 namespace PhprojektRemoteApi\Module;
 
+use PhprojektRemoteApi\Tools\Convert;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Ptimecontrol extends AbstractApi
@@ -24,7 +25,9 @@ class Ptimecontrol extends AbstractApi
     {
         $page = $this->getPtimecontrolPage(['action' => 'full']);
 
-        return $page->filterXPath($this->overtimeXPath)->html();
+        $node = $page->filterXPath($this->overtimeXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getOvertimeYear($year)
@@ -34,7 +37,9 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->overtimeXPath)->html();
+        $node = $page->filterXPath($this->overtimeXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getOvertimeMonth($month, $year)
@@ -45,14 +50,18 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->overtimeXPath)->html();
+        $node = $page->filterXPath($this->overtimeXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getWorkedHoursOverall()
     {
         $page = $this->getPtimecontrolPage(['action' => 'full']);
 
-        return $page->filterXPath($this->workingHoursXPath)->html();
+        $node = $page->filterXPath($this->workingHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getWorkedHoursYear($year)
@@ -62,7 +71,9 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->workingHoursXPath)->html();
+        $node = $page->filterXPath($this->workingHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getWorkedHoursMonth($month, $year)
@@ -73,14 +84,18 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->workingHoursXPath)->html();
+        $node = $page->filterXPath($this->workingHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getProjectHoursOverall()
     {
         $page = $this->getPtimecontrolPage(['action' => 'full']);
 
-        return $page->filterXPath($this->projectHoursXPath)->html();
+        $node = $page->filterXPath($this->projectHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getProjectHoursYear($year)
@@ -90,7 +105,9 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->projectHoursXPath)->html();
+        $node = $page->filterXPath($this->projectHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     public function getProjectHoursMonth($month, $year)
@@ -101,7 +118,9 @@ class Ptimecontrol extends AbstractApi
             'year' => $year
         ]);
 
-        return $page->filterXPath($this->projectHoursXPath)->html();
+        $node = $page->filterXPath($this->projectHoursXPath);
+
+        return Convert::text2hours($node->text());
     }
 
     /**
