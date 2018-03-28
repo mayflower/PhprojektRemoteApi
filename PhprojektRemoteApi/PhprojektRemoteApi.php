@@ -59,7 +59,6 @@ class PhprojektRemoteApi
         $this->password      = $password;
 
         $this->httpClient = new Client();
-        $this->httpClient->getClient()->setDefaultOption('verify', false);
     }
 
     /**
@@ -73,7 +72,7 @@ class PhprojektRemoteApi
             return false;
         }
 
-        $crawler = $this->httpClient->request('GET', $this->phprojektUrl);
+        $crawler = $this->httpClient->request('GET', $this->phprojektUrl, ['verify' => false]);
         $xpath = '//*[@id="global-main"]/div[2]/form/fieldset/input[3]';
         $node = $crawler->filterXPath($xpath);
         $form = $node->form();

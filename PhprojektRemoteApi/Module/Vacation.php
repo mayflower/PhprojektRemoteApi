@@ -85,7 +85,7 @@ class Vacation extends AbstractApi
      */
     private function getVacationPage()
     {
-        return $this->httpClient->request('GET', $this->phprojektUrl . '/vacation/index.php');
+        return $this->httpClient->request('GET', $this->phprojektUrl . '/vacation/index.php', ['verify' => false]);
     }
 
 }

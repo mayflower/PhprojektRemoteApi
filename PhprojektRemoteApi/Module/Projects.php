@@ -80,7 +80,8 @@ class Projects extends AbstractApi
     {
         $crawler = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/projects/projects.php?' . http_build_query($urlParams)
+            $this->phprojektUrl . '/projects/projects.php?' . http_build_query($urlParams),
+            ['verify' => false]
         );
         return $crawler;
     }

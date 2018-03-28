@@ -36,7 +36,8 @@ class Timecard extends AbstractApi
     {
         $timecard = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/timecard/timecard.php'
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
         );
         $link = $timecard->selectLink('Arbeitszeit Start')->link();
         $this->httpClient->click($link);
@@ -51,7 +52,8 @@ class Timecard extends AbstractApi
     {
         $timecard = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/timecard/timecard.php'
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
         );
         $link = $timecard->selectLink('Arbeitszeit Ende')->link();
         $this->httpClient->click($link);
@@ -68,7 +70,8 @@ class Timecard extends AbstractApi
     {
         $timecard = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/timecard/timecard.php'
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
         );
 
         $xpath = '//*[@name="nachtragen1"]';
@@ -155,7 +158,8 @@ class Timecard extends AbstractApi
     {
         $timeCard = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/timecard/timecard.php'
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
         );
 
         $xpath = '//*[@name="pickdate"]';
@@ -302,7 +306,8 @@ class Timecard extends AbstractApi
     {
         $timeCard = $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/timecard/timecard.php'
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
         );
         $link = $timeCard->selectLink('Favoriten')->link();
         $timeCard = $this->httpClient->click($link);

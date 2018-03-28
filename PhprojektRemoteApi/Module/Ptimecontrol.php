@@ -132,7 +132,8 @@ class Ptimecontrol extends AbstractApi
     {
         return $this->httpClient->request(
             'GET',
-            $this->phprojektUrl . '/ptimecontrol/ptc.php?' . http_build_query($params)
+            $this->phprojektUrl . '/ptimecontrol/ptc.php?' . http_build_query($params),
+            ['verify' => false]
         );
     }
 
