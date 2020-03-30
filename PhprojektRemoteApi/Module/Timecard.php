@@ -39,7 +39,7 @@ class Timecard extends AbstractApi
             $this->phprojektUrl . '/timecard/timecard.php',
             ['verify' => false]
         );
-        $link = $timecard->selectLink('Arbeitszeit Start')->link();
+        $link = $timecard->selectLink('Working times start')->link();
         $this->httpClient->click($link);
     }
 
@@ -55,7 +55,7 @@ class Timecard extends AbstractApi
             $this->phprojektUrl . '/timecard/timecard.php',
             ['verify' => false]
         );
-        $link = $timecard->selectLink('Arbeitszeit Ende')->link();
+        $link = $timecard->selectLink('Working times stop')->link();
         $this->httpClient->click($link);
     }
 
