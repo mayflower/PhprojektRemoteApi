@@ -88,6 +88,62 @@ class Timecard extends AbstractApi
     }
 
     /**
+     * Log start of working time for a specific date
+     *
+     * @param DateTime $date
+     * @param string    $start
+     * @param string    $end
+     */
+    public function logStartWorkingTime(DateTime $date, $start)
+    {
+        $timecard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
+        );
+
+        $xpath = '//*[@name="nachtragen1"]';
+        $node = $timecard->filterXPath($xpath);
+        $form = $node->form();
+
+        $form->setValues([
+            'date'      => $date->format('d.m.Y'),
+            'timestart' => $start,
+            'timestop'  => null
+        ]);
+
+        $this->httpClient->submit($form);
+    }
+
+    /**
+     * Log end of working time for a specific date
+     *
+     * @param DateTime $date
+     * @param string    $start
+     * @param string    $end
+     */
+    public function logEndWorkingTime(DateTime $date, $end)
+    {
+        $timecard = $this->httpClient->request(
+            'GET',
+            $this->phprojektUrl . '/timecard/timecard.php',
+            ['verify' => false]
+        );
+
+        $xpath = '//*[@name="nachtragen1"]';
+        $node = $timecard->filterXPath($xpath);
+        $form = $node->form();
+        $endKey = array_values($form->get('ende'))[0]->getName();
+
+        $form->setValues([
+            'date'  => $date->format('d.m.Y'),
+            $endKey => $end
+        ]);
+
+        $this->httpClient->submit($form);
+    }
+
+    /**
      * @param DateTime $date
      * @param string    $start
      * @param string    $end
