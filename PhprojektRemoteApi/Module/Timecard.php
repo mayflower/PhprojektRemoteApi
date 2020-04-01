@@ -102,7 +102,7 @@ class Timecard extends AbstractApi
             ['verify' => false, 'date' => $date->format('Y-m-d')]
         );
 
-        $xpath = '//*[@name="nachtragen"]';
+        $xpath = '//*[@name="nachtragen1"]';
         $node = $timecard->filterXPath($xpath);
         $form = $node->form();
 
