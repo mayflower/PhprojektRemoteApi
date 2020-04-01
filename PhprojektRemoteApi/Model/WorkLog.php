@@ -30,10 +30,9 @@ class WorkLog
      * @param DateTime $start
      * @param DateTime $end
      */
-    function __construct(DateTime $start, DateTime $end)
+    function __construct(DateTime $start)
     {
         $this->start = $start;
-        $this->end = $end;
     }
 
     /**
