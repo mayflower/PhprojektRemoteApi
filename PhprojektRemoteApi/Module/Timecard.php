@@ -97,12 +97,12 @@ class Timecard extends AbstractApi
     public function logStartWorkingTime(DateTime $date, $start)
     {
         $timecard = $this->httpClient->request(
-            'GET',
+            'POST',
             $this->phprojektUrl . '/timecard/timecard.php',
-            ['verify' => false]
+            ['verify' => false, 'date' => $date->format('Y-m-d')]
         );
 
-        $xpath = '//*[@name="nachtragen1"]';
+        $xpath = '//*[@name="nachtragen"]';
         $node = $timecard->filterXPath($xpath);
         $form = $node->form();
 
@@ -125,12 +125,12 @@ class Timecard extends AbstractApi
     public function logEndWorkingTime(DateTime $date, $end)
     {
         $timecard = $this->httpClient->request(
-            'GET',
+            'POST',
             $this->phprojektUrl . '/timecard/timecard.php',
-            ['verify' => false]
+            ['verify' => false, 'date' => $date->format('Y-m-d')]
         );
 
-        $xpath = '//*[@name="nachtragen1"]';
+        $xpath = '//*[@name="nachtragen"]';
         $node = $timecard->filterXPath($xpath);
         $form = $node->form();
         $endKey = array_values($form->get('ende'))[0]->getName();
