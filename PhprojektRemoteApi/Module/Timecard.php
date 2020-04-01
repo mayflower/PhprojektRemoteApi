@@ -257,9 +257,9 @@ class Timecard extends AbstractApi
 
         $xpath = '//table[@summary=""]/tfoot/tr/td[3]';
         $node = $timeCard->filterXPath($xpath);
-        $worklog->setOverallTime(Convert::text2hours($node->html()));
+        $worklogs->setOverallTime(Convert::text2hours($node->html()));
 
-        return $worklog;
+        return $worklogs;
     }
 
     /**
