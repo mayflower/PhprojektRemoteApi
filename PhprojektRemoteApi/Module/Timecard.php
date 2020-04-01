@@ -236,7 +236,7 @@ class Timecard extends AbstractApi
 
         $times = $document->getElementsByTagName('tr');
 
-        $worklog = new DayWorkLog();
+        $worklogs = new DayWorkLog();
 
         foreach ($times as $time) {
             $specifiedTimeRow = $time->getElementsByTagName('td');
@@ -246,15 +246,12 @@ class Timecard extends AbstractApi
                 $row[] = $timeRow->textContent;
             }
             if ($row[0] != "") {
-                $worklog->addLog(
-                    new WorkLog(
-                        DateTime::createFromFormat("Hi", $row[0])
-                    )
-                );
-                
+                $worklog = new WorkLog(DateTime::createFromFormat("Hi", $row[0]));
                 if ($row[1] != "") {
                     $worklog->setEnd(DateTime::createFromFormat("Hi", $row[1]));
                 }
+
+                $worklogs->addLog($worklog);
             }
         }
 
