@@ -25,6 +25,11 @@ class DayWorkLog implements Countable, IteratorAggregate
     protected $overallTime;
 
     /**
+     * @var string
+     */
+    protected $overallTimeString;
+
+    /**
      * @var WorkLog[]
      */
     protected $workLog = [];
@@ -43,6 +48,22 @@ class DayWorkLog implements Countable, IteratorAggregate
     public function getOverallTime()
     {
         return $this->overallTime;
+    }
+
+    /**
+     * @param string $time
+     */
+    public function setOverallTimeString($time)
+    {
+        $this->overallTimeString = $time;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOverallTimeString()
+    {
+        return $this->overallTimeString;
     }
 
     /**
